@@ -49,10 +49,7 @@ topit::Vector<T>::~Vector() {
     delete[] data_;
 template<class T>
 T& topit::Vector<T>::at(size_t id) {
-    if (id < getSize()) {
-        return data_[id];
-    }
-    throw std::out_of_range("bad idea");
+    return const_cast<T&>(static_cast<const Vector<T>&>(*this).at(id));
 }
 template<class T>
 const T& topit::Vector<T>::at(size_t id) {
