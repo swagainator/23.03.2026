@@ -1,4 +1,4 @@
-FLAGS = -Wall -Wextra -Weffc++ -std=c++14
+CXXFLAGS = -Wall -Wextra -Weffc++ -std=c++14
 
-vector-tests: main.cpp
-	$(CXX) -o $@ $(FLAGS) $^
+vector-tests: main.o
+	$(CXX) -o $@ $^
