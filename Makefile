@@ -1,2 +1,4 @@
-vector-tests: main.cpp vector-top-it.h
-	g++ -o vector-tests -Wall -Wextra -Weffc++ -std=c++14 main.cpp
+FLAGS = -Wall -Wextra -Weffc++ -std=c++14
+
+vector-tests: main.cpp
+	$(CXX) -o $@ $(FLAGS) $^
