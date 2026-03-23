@@ -1,40 +1,40 @@
 #include "vector-top-it.h"
-#include <iostream>
+
 #include <cstddef>
+#include <iostream>
+#include <stdexcept>
+#include <utility>
+
 using topit::Vector;
-bool test1() {
 
-
+static bool test1_isEmpty_empty() {
     Vector<int> v;
     return v.isEmpty();
 }
-bool test2() {
 
-
+static bool test2_getSize_empty() {
     Vector<int> v;
     return v.getSize() == 0;
 }
-bool test3() {
-    constexpr size_t size = 3ull;
 
+static bool test3_getSize_nonEmpty() {
+    constexpr size_t size = 3ull;
     Vector<int> v(size);
-    return v.getSize() == 3;
+    return v.getSize() == size;
 }
-bool test4() {
+
+static bool test4_at_nonConst_inRange() {
+    constexpr size_t size = 3ull;
+    Vector<int> v(size, 0);
+    v.at(1) = 42;
+    return v.at(1) == 42;
+}
+
+static bool test5_at_nonConst_outOfRange() {
     constexpr size_t size = 3ull;
     Vector<int> v(size);
     try {
-        v.at(size);
-        return true;
-    } catch (...) {
-        return false;
-    }
-}
-bool test5() {
-    constexpr size_t size = 3ull;
-    Vector<int> v(size);
-    try {
-        v.at(size+1);
+        (void)v.at(size);
         return false;
     } catch (const std::out_of_range&) {
         return true;
@@ -42,55 +42,68 @@ bool test5() {
         return false;
     }
 }
-bool test4() {
-    constexpr size_t size = 3ull;
-    const Vector<int> v(size);
-    try {
-        v.at(size);
-        return true;
-    } catch (...) {
-        return false;
-    }
+
+static bool test6_at_const_inRange() {
+    constexpr size_t size = 2ull;
+    const Vector<int> v(size, 7);
+    return v.at(0) == 7 && v.at(1) == 7;
 }
-bool test7() {
+
+static bool test7_at_const_outOfRange() {
     constexpr size_t size = 3ull;
     const Vector<int> v(size);
     try {
-        v.at(size+1);
+        (void)v.at(size + 1);
         return false;
     } catch (const std::out_of_range&) {
         return true;
     } catch (...) {
         return false;
     }
+}
+
+static bool test8_index_operator_nonConst() {
+    Vector<int> v(3, 0);
+    v[2] = 5;
+    return v[2] == 5;
+}
+
+static bool test9_index_operator_const() {
+    const Vector<int> v(3, 9);
+    return v[0] == 9 && v[1] == 9 && v[2] == 9;
 }
 
 int main() {
     using test_t = bool (*)();
     using case_t = std::pair<test_t, const char*>;
+
     case_t tests[] = {
-        {test1, "Test 1: isEmpty() should return true for an empty vector."},
-        {test2, "Test 2: getSize() should return 0 for an empty vector."},
-        {test3, "Test 3: getSize() should return the correct size for a non-empty vector."},
-        {test4, "Test 4: at() should throw an exception when accessing out-of-bounds index."},
-        {test5, "Test 5: at() should throw std::out_of_range when accessing out-of-bounds index."},
-        {test6, "Test 6: const at() should throw an exception when accessing out-of-bounds index."},
-        {test7, "Test 7: const at() should throw std::out_of_range when accessing out-of-bounds index."}
+        {test1_isEmpty_empty, "Test 1: isEmpty() returns true for empty vector"},
+        {test2_getSize_empty, "Test 2: getSize() == 0 for empty vector"},
+        {test3_getSize_nonEmpty, "Test 3: getSize() returns constructor size"},
+        {test4_at_nonConst_inRange, "Test 4: at() (non-const) works in-range and allows write"},
+        {test5_at_nonConst_outOfRange, "Test 5: at() (non-const) throws std::out_of_range when OOB"},
+        {test6_at_const_inRange, "Test 6: at() (const) works in-range"},
+        {test7_at_const_outOfRange, "Test 7: at() (const) throws std::out_of_range when OOB"},
+        {test8_index_operator_nonConst, "Test 8: operator[] (non-const) returns reference"},
+        {test9_index_operator_const, "Test 9: operator[] (const) returns const reference"},
     };
+
     std::cout << std::boolalpha;
-    bool result = true;
+
+    size_t successes = 0;
+    size_t fails = 0;
+
     for (size_t i = 0; i < sizeof(tests) / sizeof(case_t); ++i) {
-        bool case_result = tests[i].first();
-        successes += case_result;
-        fails += !case_result;
-        result = result && case_result;
-        std::cout << case_result;
-
-        std::cout << ":";
-        std::cout << tests[i].second << std::endl;
+        const bool ok = tests[i].first();
+        successes += ok ? 1 : 0;
+        fails += ok ? 0 : 1;
+        std::cout << ok << ": " << tests[i].second << std::endl;
     }
-    std::cout << "Total: " << (sizeof(tests) / sizeof(case_t)) << ", Successes: " << successes << ", Fails: " << fails << std::endl;
 
+    std::cout << "Total: " << (sizeof(tests) / sizeof(case_t))
+              << ", Successes: " << successes
+              << ", Fails: " << fails << std::endl;
 
+    return fails == 0 ? 0 : 1;
 }
-
