@@ -48,12 +48,17 @@ template<class T>
 topit::Vector<T>::~Vector() {
     delete[] data_;
 template<class T>
-T& topit::Vector<T>::at(size_t id)  {
-    throw std::logic_error("bad idea");
+T& topit::Vector<T>::at(size_t id) {
+    if (id < getSize()) {
+        return data_[id];
+    }
+    throw std::out_of_range("bad idea");
 }
 template<class T>
-const T& topit::Vector<T>::at(size_t id) const {
-    throw std::logic_error("bad idea");
+const T& topit::Vector<T>::at(size_t id) {
+    if (id < getSize()) {
+        return data_[id];
+    }
+    throw std::out_of_range("bad idea");
 }
-
 #endif
