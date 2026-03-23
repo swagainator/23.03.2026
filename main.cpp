@@ -78,8 +78,19 @@ int main() {
         {test7, "Test 7: const at() should throw std::out_of_range when accessing out-of-bounds index."}
     };
     std::cout << std::boolalpha;
+    bool result = true;
     for (size_t i = 0; i < sizeof(tests) / sizeof(case_t); ++i) {
-        std::cout << tests[i].first()  << ":" << tests[i].second << "\n";
+        bool case_result = tests[i].first();
+        successes += case_result;
+        fails += !case_result;
+        result = result && case_result;
+        std::cout << case_result;
+
+        std::cout << ":";
+        std::cout << tests[i].second << std::endl;
     }
+    std::cout << "Total: " << (sizeof(tests) / sizeof(case_t)) << ", Successes: " << successes << ", Fails: " << fails << std::endl;
+
+
 }
 
