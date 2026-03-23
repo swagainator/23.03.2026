@@ -73,6 +73,25 @@ static bool test9_index_operator_const() {
     return v[0] == 9 && v[1] == 9 && v[2] == 9;
 }
 
+static bool test10_equals_and_notEquals_same() {
+    const Vector<int> a(3, 1);
+    const Vector<int> b(3, 1);
+    return (a == b) && !(a != b);
+}
+
+static bool test11_notEquals_differentValue() {
+    Vector<int> a(3, 1);
+    Vector<int> b(3, 1);
+    b[2] = 2;
+    return (a != b) && !(a == b);
+}
+
+static bool test12_notEquals_differentSize() {
+    const Vector<int> a(2, 1);
+    const Vector<int> b(3, 1);
+    return (a != b) && !(a == b);
+}
+
 int main() {
     using test_t = bool (*)();
     using case_t = std::pair<test_t, const char*>;
@@ -87,6 +106,9 @@ int main() {
         {test7_at_const_outOfRange, "Test 7: at() (const) throws std::out_of_range when OOB"},
         {test8_index_operator_nonConst, "Test 8: operator[] (non-const) returns reference"},
         {test9_index_operator_const, "Test 9: operator[] (const) returns const reference"},
+        {test10_equals_and_notEquals_same, "Test 10: operator== true and operator!= false for equal vectors"},
+        {test11_notEquals_differentValue, "Test 11: operator!= true for different values"},
+        {test12_notEquals_differentSize, "Test 12: operator!= true for different sizes"},
     };
 
     std::cout << std::boolalpha;

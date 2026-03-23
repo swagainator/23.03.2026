@@ -32,6 +32,9 @@ namespace topit {
     template<class T>
     bool operator==(const Vector<T>& lhs, const Vector<T>& rhs);
 
+    template<class T>
+    bool operator!=(const Vector<T>& lhs, const Vector<T>& rhs);
+
 
     template<class T>
     Vector<T>::Vector() : data_(nullptr), size_(0), capacity_(0) {}
@@ -98,6 +101,12 @@ namespace topit {
         }
         return true;
     }
+
+    template<class T>
+    bool operator!=(const Vector<T>& lhs, const Vector<T>& rhs) {
+        return !(lhs == rhs);
+    }
+
 }
 
 #endif
