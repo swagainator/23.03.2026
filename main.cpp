@@ -15,7 +15,7 @@ int main() {
     };
     std::cout << std::boolalpha;
     for (size_t i = 0; i < sizeof(tests) / sizeof(case_t); ++i) {
-        std::cout << tests[i].first()  << "i" << i << "\n";
+        std::cout << tests[i].first()  << ":" << tests[i].second << "\n";
     }
 }
 
