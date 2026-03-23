@@ -17,11 +17,13 @@ namespace topit {
 
         bool isEmpty() const noexcept;
         size_t getSize() const noexcept;
+        size_t getCapacity() const noexcept;
 
         T& operator[](size_t id) noexcept;
         const T& operator[](size_t id) const noexcept;
         T& at(size_t id);
         const T& at(size_t id) const;
+        void pushBack(const T& val);
 
     private:
         T* data_;
@@ -67,6 +69,11 @@ namespace topit {
     }
 
     template<class T>
+    size_t Vector<T>::getCapacity() const noexcept {
+        return capacity_;
+    }
+
+    template<class T>
     T& Vector<T>::operator[](size_t id) noexcept {
         return data_[id];
     }
@@ -87,6 +94,22 @@ namespace topit {
             return data_[id];
         }
         throw std::out_of_range("Vector::at: index out of range");
+    }
+
+    template<class T>
+    void Vector<T>::pushBack(const T& val) {
+        if (size_ == capacity_) {
+            const size_t new_capacity = (capacity_ == 0) ? 1 : capacity_ * 2;
+            T* new_data = new T[new_capacity];
+            for (size_t i = 0; i < size_; ++i) {
+                new_data[i] = data_[i];
+            }
+            delete[] data_;
+            data_ = new_data;
+            capacity_ = new_capacity;
+        }
+        data_[size_] = val;
+        ++size_;
     }
 
     template<class T>

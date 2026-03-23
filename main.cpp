@@ -92,6 +92,56 @@ static bool test12_notEquals_differentSize() {
     return (a != b) && !(a == b);
 }
 
+static bool test13_capacity_default() {
+    const Vector<int> v;
+    return v.getSize() == 0 && v.getCapacity() == 0;
+}
+
+static bool test14_capacity_constructed() {
+    const Vector<int> v(5);
+    return v.getSize() == 5 && v.getCapacity() == 5;
+}
+
+static bool test15_pushBack_single() {
+    Vector<int> v;
+    v.pushBack(10);
+    return v.getSize() == 1 && v.getCapacity() >= 1 && v[0] == 10;
+}
+
+static bool test16_pushBack_growth_and_values() {
+    Vector<int> v;
+    const size_t cap0 = v.getCapacity();
+
+    v.pushBack(1);
+    const size_t cap1 = v.getCapacity();
+    if (!(cap1 >= 1 && cap1 >= cap0)) {
+        return false;
+    }
+
+    // Доводим до момента, когда точно понадобится рост
+    while (v.getSize() < v.getCapacity()) {
+        v.pushBack(7);
+    }
+
+    const size_t before = v.getCapacity();
+    v.pushBack(99);
+    const size_t after = v.getCapacity();
+
+    if (!(after > before)) {
+        return false;
+    }
+    if (v[v.getSize() - 1] != 99) {
+        return false;
+    }
+
+    // Проверим, что старые значения не потерялись
+    if (v[0] != 1) {
+        return false;
+    }
+
+    return true;
+}
+
 int main() {
     using test_t = bool (*)();
     using case_t = std::pair<test_t, const char*>;
@@ -109,6 +159,10 @@ int main() {
         {test10_equals_and_notEquals_same, "Test 10: operator== true and operator!= false for equal vectors"},
         {test11_notEquals_differentValue, "Test 11: operator!= true for different values"},
         {test12_notEquals_differentSize, "Test 12: operator!= true for different sizes"},
+        {test13_capacity_default, "Test 13: getCapacity() == 0 for default vector"},
+        {test14_capacity_constructed, "Test 14: getCapacity() equals size after Vector(n)"},
+        {test15_pushBack_single, "Test 15: pushBack() adds one element"},
+        {test16_pushBack_growth_and_values, "Test 16: pushBack() grows capacity and keeps values"},
     };
 
     std::cout << std::boolalpha;
