@@ -142,6 +142,118 @@ static bool test16_pushBack_growth_and_values() {
     return true;
 }
 
+static bool test17_equals_emptyVectors() {
+    const Vector<int> a;
+    const Vector<int> b;
+    return (a == b) && !(a != b);
+}
+
+static bool test18_pushBack_preservesOrder() {
+    Vector<int> v;
+    v.pushBack(1);
+    v.pushBack(2);
+    v.pushBack(3);
+    v.pushBack(4);
+    v.pushBack(5);
+
+    if (v.getSize() != 5) {
+        return false;
+    }
+
+    for (size_t i = 0; i < v.getSize(); ++i) {
+        if (v[i] != static_cast<int>(i + 1)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static bool test19_pushBack_preservesAllElements_afterSeveralReallocations() {
+    Vector<int> v;
+
+    const int n = 100;
+    for (int i = 0; i < n; ++i) {
+        v.pushBack(i * 10);
+    }
+
+    if (v.getSize() != static_cast<size_t>(n)) {
+        return false;
+    }
+
+    for (int i = 0; i < n; ++i) {
+        if (v[static_cast<size_t>(i)] != i * 10) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static bool test20_capacity_doubles_0_1_2_4_8() {
+    Vector<int> v;
+    if (v.getCapacity() != 0) {
+        return false;
+    }
+
+    v.pushBack(1);
+    if (v.getCapacity() != 1) {
+        return false;
+    }
+
+    v.pushBack(2);
+    if (v.getCapacity() != 2) {
+        return false;
+    }
+
+    v.pushBack(3);
+    if (v.getCapacity() != 4) {
+        return false;
+    }
+
+    v.pushBack(4);
+    if (v.getCapacity() != 4) {
+        return false;
+    }
+
+    v.pushBack(5);
+    if (v.getCapacity() != 8) {
+        return false;
+    }
+
+    return true;
+}
+
+static bool test21_index_operator_nonConst_returnsReference() {
+    Vector<int> v(3, 0);
+
+    const size_t index = 1;
+    int& ref = v[index];
+
+    if (&ref != &v[index]) {
+        return false;
+    }
+
+    ref = 123;
+    return v[index] == 123;
+}
+
+static bool test22_equals_emptyAndNonEmpty() {
+    const Vector<int> empty;
+    const Vector<int> nonEmpty(1, 0);
+    return (empty != nonEmpty) && !(empty == nonEmpty);
+}
+
+static bool test23_at_nonConst_returnsReference_addressCheck() {
+    Vector<int> v(2, 5);
+    int& r = v.at(0);
+    if (&r != &v[0]) {
+        return false;
+    }
+    r = 77;
+    return v[0] == 77;
+}
+
 int main() {
     using test_t = bool (*)();
     using case_t = std::pair<test_t, const char*>;
@@ -163,6 +275,13 @@ int main() {
         {test14_capacity_constructed, "Test 14: getCapacity() equals size after Vector(n)"},
         {test15_pushBack_single, "Test 15: pushBack() adds one element"},
         {test16_pushBack_growth_and_values, "Test 16: pushBack() grows capacity and keeps values"},
+        {test17_equals_emptyVectors, "Test 17: operator== true for two empty vectors"},
+        {test18_pushBack_preservesOrder, "Test 18: pushBack() preserves element order"},
+        {test19_pushBack_preservesAllElements_afterSeveralReallocations, "Test 19: pushBack() keeps all old elements after several reallocations"},
+        {test20_capacity_doubles_0_1_2_4_8, "Test 20: capacity doubles 0->1->2->4->8 during pushBack()"},
+        {test21_index_operator_nonConst_returnsReference, "Test 21: operator[] (non-const) is a true reference (address + write via ref)"},
+        {test22_equals_emptyAndNonEmpty, "Test 22: operator== false and operator!= true for empty vs non-empty"},
+        {test23_at_nonConst_returnsReference_addressCheck, "Test 23: at() (non-const) returns reference to element"},
     };
 
     std::cout << std::boolalpha;
