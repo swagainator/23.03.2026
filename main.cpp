@@ -303,8 +303,7 @@ int main() {
         {test23_at_nonConst_returnsReference_addressCheck, "Test 23: at() (non-const) returns reference to element"},
         {test24_copyCtor_equal, "Test 24: Copy constructor creates equal vector"},
         {test25_copyAssign_equal, "Test 25: Assignment operator creates equal vector and does not break equality"},
-        test26_swap_swapsTwoVectors_andPreservesValues, "Test 26: swap() swaps two vectors and preserves their values"
-    }
+        {test26_swap_swapsTwoVectors_andPreservesValues, "Test 26: swap() swaps two vectors and preserves their values"},
     };
 
     std::cout << std::boolalpha;
