@@ -174,6 +174,74 @@ namespace topit {
 		swap(result);
     }
     template<class T>
+    void Vector<T>::insert(size_t pos, const T& val) {
+        if (pos > size_) {
+            throw std::out_of_range("Vector::insert: pos out of range");
+        }
+
+        Vector<T> result(size_ + 1);
+
+        for (size_t i = 0; i < pos; ++i) {
+            result.data_[i] = data_[i];
+        }
+
+        result.data_[pos] = val;
+
+        for (size_t i = pos; i < size_; ++i) {
+            result.data_[i + 1] = data_[i];
+        }
+
+        swap(result);
+    }
+
+    template<class T>
+    void Vector<T>::insert(size_t pos, const Vector<T>& rhs, size_t b, size_t e) {
+        if (pos > size_) {
+            throw std::out_of_range("Vector::insert: pos out of range");
+        }
+        if (b > e || e > rhs.size_) {
+            throw std::out_of_range("Vector::insert: range out of range");
+        }
+
+        const size_t add = e - b;
+        Vector<T> result(size_ + add);
+
+        // prefix
+        for (size_t i = 0; i < pos; ++i) {
+            result.data_[i] = data_[i];
+        }
+
+        for (size_t i = 0; i < add; ++i) {
+            result.data_[pos + i] = rhs.data_[b + i];
+        }
+
+        for (size_t i = pos; i < size_; ++i) {
+            result.data_[add + i] = data_[i];
+        }
+
+        swap(result);
+    }
+
+    template<class T>
+    void Vector<T>::erase(size_t pos) {
+        if (pos >= size_) {
+            throw std::out_of_range("Vector::erase: pos out of range");
+        }
+
+        Vector<T> result(size_ - 1);
+
+        for (size_t i = 0; i < pos; ++i) {
+            result.data_[i] = data_[i];
+        }
+
+        for (size_t i = pos + 1; i < size_; ++i) {
+            result.data_[i - 1] = data_[i];
+        }
+
+        swap(result);
+    }
+
+    template<class T>
     bool operator==(const Vector<T>& lhs, const Vector<T>& rhs) {
         if (lhs.getSize() != rhs.getSize()) {
             return false;
