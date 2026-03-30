@@ -265,7 +265,14 @@ static bool test25_copyAssign_equal() {
     v = yav;
     return res && v == yav;
 }
-
+static bool test26_swap_swapsTwoVectors_andPreservesValues() {
+    Vector<int> v(2, 0);
+    Vector<int> yav(3,1);
+    Vector<int> cpy_v(v);
+    Vector<int> cpy_yav(yav);
+    v.swap(yav);
+    return v == cpy_yav && yav == cpy_v;
+}
 int main() {
     using test_t = bool (*)();
     using case_t = std::pair<test_t, const char*>;
@@ -296,6 +303,8 @@ int main() {
         {test23_at_nonConst_returnsReference_addressCheck, "Test 23: at() (non-const) returns reference to element"},
         {test24_copyCtor_equal, "Test 24: Copy constructor creates equal vector"},
         {test25_copyAssign_equal, "Test 25: Assignment operator creates equal vector and does not break equality"},
+        test26_swap_swapsTwoVectors_andPreservesValues, "Test 26: swap() swaps two vectors and preserves their values"
+    }
     };
 
     std::cout << std::boolalpha;
