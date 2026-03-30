@@ -253,6 +253,18 @@ static bool test23_at_nonConst_returnsReference_addressCheck() {
     r = 77;
     return v[0] == 77;
 }
+static bool test24_copyCtor_equal() {
+    Vector<int> v(2, 0);
+    Vector<int> yav = v;
+    return yav == v;
+}
+static bool test25_copyAssign_equal() {
+    Vector<int> v(2, 0);
+    Vector<int> yav(v);
+    bool res = v != yav;
+    v = yav;
+    return res && v == yav;
+}
 
 int main() {
     using test_t = bool (*)();
@@ -282,6 +294,8 @@ int main() {
         {test21_index_operator_nonConst_returnsReference, "Test 21: operator[] (non-const) is a true reference (address + write via ref)"},
         {test22_equals_emptyAndNonEmpty, "Test 22: operator== false and operator!= true for empty vs non-empty"},
         {test23_at_nonConst_returnsReference_addressCheck, "Test 23: at() (non-const) returns reference to element"},
+        {test24_copyCtor_equal, "Test 24: Copy constructor creates equal vector"},
+        {test25_copyAssign_equal, "Test 25: Assignment operator creates equal vector and does not break equality"},
     };
 
     std::cout << std::boolalpha;
