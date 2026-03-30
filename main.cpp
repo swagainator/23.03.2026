@@ -261,7 +261,7 @@ static bool test24_copyCtor_equal() {
 static bool test25_copyAssign_equal() {
     Vector<int> v(2, 0);
     Vector<int> yav(v);
-    bool res = v != yav;
+    const bool res = (v == yav);
     v = yav;
     return res && v == yav;
 }
@@ -273,6 +273,8 @@ static bool test26_swap_swapsTwoVectors_andPreservesValues() {
     v.swap(yav);
     return v == cpy_yav && yav == cpy_v;
 }
+
+
 int main() {
     using test_t = bool (*)();
     using case_t = std::pair<test_t, const char*>;
