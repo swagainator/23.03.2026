@@ -144,8 +144,6 @@ namespace topit {
 	capacity_(rhs.capacity_)
 	{
 	    rhs.data_ = nullptr;
-        rhs.size_ = 0;
-        rhs.capacity_ = 0;
 	}
     template<class T>
     bool operator==(const Vector<T>& lhs, const Vector<T>& rhs) {
