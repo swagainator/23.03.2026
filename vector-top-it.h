@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <stdexcept>
+#include <utility>
 
 namespace topit {
     template<class T>
@@ -12,9 +13,10 @@ namespace topit {
         Vector(size_t size, const T& val);
         ~Vector();
 
-        Vector(const Vector<T>&) = delete;
-        Vector<T>& operator=(const Vector<T>&) = delete;
+        Vector(const Vector<T>& other);
+        Vector<T>& operator=(Vector<T> other);
 
+        void swap(Vector<T>& other) noexcept;
         bool isEmpty() const noexcept;
         size_t getSize() const noexcept;
         size_t getCapacity() const noexcept;
@@ -54,8 +56,32 @@ namespace topit {
     }
 
     template<class T>
+    Vector<T>::Vector(const Vector<T>& other)
+        : data_(other.size_ ? new T[other.size_] : nullptr),
+          size_(other.size_),
+          capacity_(other.size_) {
+        for (size_t i = 0; i < size_; ++i) {
+            data_[i] = other.data_[i];
+        }
+    }
+
+    template<class T>
+    Vector<T>& Vector<T>::operator=(Vector<T> other) {
+        swap(other);
+        return *this;
+    }
+
+    template<class T>
     Vector<T>::~Vector() {
         delete[] data_;
+    }
+
+    template<class T>
+    void Vector<T>::swap(Vector<T>& other) noexcept {
+        using std::swap;
+        swap(data_, other.data_);
+        swap(size_, other.size_);
+        swap(capacity_, other.capacity_);
     }
 
     template<class T>
