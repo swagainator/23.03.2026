@@ -273,6 +273,74 @@ static bool test26_swap_swapsTwoVectors_andPreservesValues() {
     v.swap(yav);
     return v == cpy_yav && yav == cpy_v;
 }
+static bool test27_insert_single_begin() {
+    Vector<int> v(3, 7);
+    v.insert(0, 1);
+    return v.getSize() == 4 && v[0] == 1 && v[1] == 7 && v[2] == 7 && v[3] == 7;
+}
+
+static bool test28_insert_single_middle_end() {
+    Vector<int> v;
+    v.pushBack(1);
+    v.pushBack(2);
+    v.pushBack(4);
+
+    v.insert(2, 3);
+    if (!(v.getSize() == 4 && v[0] == 1 && v[1] == 2 && v[2] == 3 && v[3] == 4)) {
+        return false;
+    }
+
+    v.insert(v.getSize(), 5);
+    return v.getSize() == 5 && v[4] == 5;
+}
+
+static bool test29_insert_range() {
+    Vector<int> a;
+    a.pushBack(1);
+    a.pushBack(4);
+
+    Vector<int> b;
+    b.pushBack(9);
+    b.pushBack(8);
+    b.pushBack(7);
+    b.pushBack(6);
+
+    a.insert(1, b, 1, 3);
+
+    return a.getSize() == 4 && a[0] == 1 && a[1] == 8 && a[2] == 7 && a[3] == 4;
+}
+
+static bool test30_erase_middle() {
+    Vector<int> v;
+    v.pushBack(1);
+    v.pushBack(2);
+    v.pushBack(3);
+    v.pushBack(4);
+
+    v.erase(1);
+    return v.getSize() == 3 && v[0] == 1 && v[1] == 3 && v[2] == 4;
+}
+
+static bool test31_insert_erase_outOfRange_throws() {
+    Vector<int> v(1, 0);
+
+    try {
+        v.insert(2, 1);
+        return false;
+    } catch (const std::out_of_range&) {
+    } catch (...) {
+        return false;
+    }
+
+    try {
+        v.erase(1);
+        return false;
+    } catch (const std::out_of_range&) {
+        return true;
+    } catch (...) {
+        return false;
+    }
+}
 
 
 int main() {
@@ -306,6 +374,11 @@ int main() {
         {test24_copyCtor_equal, "Test 24: Copy constructor creates equal vector"},
         {test25_copyAssign_equal, "Test 25: Assignment operator creates equal vector and does not break equality"},
         {test26_swap_swapsTwoVectors_andPreservesValues, "Test 26: swap() swaps two vectors and preserves their values"},
+        {test27_insert_single_begin, "Test 27: insert(pos,val) inserts at begin"},
+        {test28_insert_single_middle_end, "Test 28: insert(pos,val) inserts in middle and end"},
+        {test29_insert_range, "Test 29: insert(pos, rhs, b, e) inserts a range"},
+        {test30_erase_middle, "Test 30: erase(pos) removes element"},
+        {test31_insert_erase_outOfRange_throws, "Test 31: insert/erase throw std::out_of_range for invalid pos"},
     };
 
     std::cout << std::boolalpha;
