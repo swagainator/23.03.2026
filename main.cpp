@@ -342,6 +342,77 @@ static bool test31_insert_erase_outOfRange_throws() {
     }
 }
 
+static bool test32_insert_iterator_begin() {
+    Vector<int> v;
+    v.pushBack(2);
+    v.pushBack(3);
+
+    v.insert(v.begin(), 1);
+
+    return v.getSize() == 3 && v[0] == 1 && v[1] == 2 && v[2] == 3;
+}
+
+static bool test33_insert_iterator_middle() {
+    Vector<int> v;
+    v.pushBack(1);
+    v.pushBack(3);
+    v.pushBack(4);
+
+    v.insert(v.begin() + 1, 2);
+
+    return v.getSize() == 4 && v[0] == 1 && v[1] == 2 && v[2] == 3 && v[3] == 4;
+}
+
+static bool test34_insert_iterator_range() {
+    Vector<int> a;
+    a.pushBack(1);
+    a.pushBack(5);
+
+    Vector<int> b;
+    b.pushBack(2);
+    b.pushBack(3);
+    b.pushBack(4);
+    b.pushBack(9);
+
+    a.insert(a.begin() + 1, b, b.begin(), b.begin() + 3);
+
+    return a.getSize() == 5 && a[0] == 1 && a[1] == 2 && a[2] == 3 && a[3] == 4 && a[4] == 5;
+}
+
+static bool test35_erase_iterator_begin() {
+    Vector<int> v;
+    v.pushBack(1);
+    v.pushBack(2);
+    v.pushBack(3);
+
+    v.erase(v.begin());
+
+    return v.getSize() == 2 && v[0] == 2 && v[1] == 3;
+}
+
+static bool test36_erase_iterator_middle() {
+    Vector<int> v;
+    v.pushBack(1);
+    v.pushBack(2);
+    v.pushBack(3);
+    v.pushBack(4);
+
+    v.erase(v.begin() + 2);
+
+    return v.getSize() == 3 && v[0] == 1 && v[1] == 2 && v[2] == 4;
+}
+
+static bool test37_erase_iterator_end_minus_one() {
+    Vector<int> v;
+    v.pushBack(1);
+    v.pushBack(2);
+    v.pushBack(3);
+
+    v.erase(v.end() - 1);
+
+    return v.getSize() == 2 && v[0] == 1 && v[1] == 2;
+}
+
 
 int main() {
     using test_t = bool (*)();
@@ -379,6 +450,12 @@ int main() {
         {test29_insert_range, "Test 29: insert(pos, rhs, b, e) inserts a range"},
         {test30_erase_middle, "Test 30: erase(pos) removes element"},
         {test31_insert_erase_outOfRange_throws, "Test 31: insert/erase throw std::out_of_range for invalid pos"},
+        {test32_insert_iterator_begin, "Test 32: insert(it, val) inserts at begin iterator"},
+        {test33_insert_iterator_middle, "Test 33: insert(it, val) inserts at middle iterator"},
+        {test34_insert_iterator_range, "Test 34: insert(it, rhs, b, e) inserts iterator range"},
+        {test35_erase_iterator_begin, "Test 35: erase(it) removes first element"},
+        {test36_erase_iterator_middle, "Test 36: erase(it) removes middle element"},
+        {test37_erase_iterator_end_minus_one, "Test 37: erase(end()-1) removes last element"},
     };
 
     std::cout << std::boolalpha;

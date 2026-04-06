@@ -8,6 +8,9 @@
 namespace topit {
     template<class T>
     struct Vector {
+        struct iterator;
+        struct const_iterator;
+
         Vector();
         explicit Vector(size_t size);
         Vector(size_t size, const T& val);
@@ -28,6 +31,9 @@ namespace topit {
         void insert(size_t pos, const T& val);
         void insert(size_t pos, const Vector<T> &rhs, size_t b, size_t e);
         void erase(size_t pos);
+        void insert(iterator pos, const T& val);
+        void insert(iterator pos, const Vector<T>& rhs, const_iterator b, const_iterator e);
+        void erase(iterator pos);
 
         T& operator[](size_t id) noexcept;
         const T& operator[](size_t id) const noexcept;
@@ -35,11 +41,66 @@ namespace topit {
         const T& at(size_t id) const;
         void pushBack(const T& val);
         void pushFront(const T& val);
+        iterator begin() noexcept;
+        const_iterator begin() const noexcept;
+        const_iterator cbegin() const noexcept;
+        iterator end() noexcept;
+        const_iterator end() const noexcept;
+        const_iterator cend() const noexcept;
 
     private:
         T* data_;
         size_t size_;
         size_t capacity_;
+    };
+
+    template<class T>
+    struct Vector<T>::iterator {
+        T* ptr;
+
+        iterator() : ptr(nullptr) {}
+        explicit iterator(T* ptr) : ptr(ptr) {}
+
+        T& operator*() const noexcept { return *ptr; }
+        T* operator->() const noexcept { return ptr; }
+        iterator& operator++() noexcept { ++ptr; return *this; }
+        iterator operator++(int) noexcept { iterator tmp(*this); ++ptr; return tmp; }
+        iterator& operator--() noexcept { --ptr; return *this; }
+        iterator operator--(int) noexcept { iterator tmp(*this); --ptr; return tmp; }
+        iterator operator+(size_t n) const noexcept { return iterator(ptr + n); }
+        iterator operator-(size_t n) const noexcept { return iterator(ptr - n); }
+        std::ptrdiff_t operator-(const iterator& rhs) const noexcept { return ptr - rhs.ptr; }
+        bool operator==(const iterator& rhs) const noexcept { return ptr == rhs.ptr; }
+        bool operator!=(const iterator& rhs) const noexcept { return ptr != rhs.ptr; }
+        bool operator<(const iterator& rhs) const noexcept { return ptr < rhs.ptr; }
+        bool operator<=(const iterator& rhs) const noexcept { return ptr <= rhs.ptr; }
+        bool operator>(const iterator& rhs) const noexcept { return ptr > rhs.ptr; }
+        bool operator>=(const iterator& rhs) const noexcept { return ptr >= rhs.ptr; }
+    };
+
+    template<class T>
+    struct Vector<T>::const_iterator {
+        const T* ptr;
+
+        const_iterator() : ptr(nullptr) {}
+        explicit const_iterator(const T* ptr) : ptr(ptr) {}
+        const_iterator(const iterator& it) : ptr(it.ptr) {}
+
+        const T& operator*() const noexcept { return *ptr; }
+        const T* operator->() const noexcept { return ptr; }
+        const_iterator& operator++() noexcept { ++ptr; return *this; }
+        const_iterator operator++(int) noexcept { const_iterator tmp(*this); ++ptr; return tmp; }
+        const_iterator& operator--() noexcept { --ptr; return *this; }
+        const_iterator operator--(int) noexcept { const_iterator tmp(*this); --ptr; return tmp; }
+        const_iterator operator+(size_t n) const noexcept { return const_iterator(ptr + n); }
+        const_iterator operator-(size_t n) const noexcept { return const_iterator(ptr - n); }
+        std::ptrdiff_t operator-(const const_iterator& rhs) const noexcept { return ptr - rhs.ptr; }
+        bool operator==(const const_iterator& rhs) const noexcept { return ptr == rhs.ptr; }
+        bool operator!=(const const_iterator& rhs) const noexcept { return ptr != rhs.ptr; }
+        bool operator<(const const_iterator& rhs) const noexcept { return ptr < rhs.ptr; }
+        bool operator<=(const const_iterator& rhs) const noexcept { return ptr <= rhs.ptr; }
+        bool operator>(const const_iterator& rhs) const noexcept { return ptr > rhs.ptr; }
+        bool operator>=(const const_iterator& rhs) const noexcept { return ptr >= rhs.ptr; }
     };
 
     template<class T>
@@ -127,6 +188,36 @@ namespace topit {
     }
 
     template<class T>
+    typename Vector<T>::iterator Vector<T>::begin() noexcept {
+        return iterator(data_);
+    }
+
+    template<class T>
+    typename Vector<T>::const_iterator Vector<T>::begin() const noexcept {
+        return const_iterator(data_);
+    }
+
+    template<class T>
+    typename Vector<T>::const_iterator Vector<T>::cbegin() const noexcept {
+        return const_iterator(data_);
+    }
+
+    template<class T>
+    typename Vector<T>::iterator Vector<T>::end() noexcept {
+        return iterator(data_ + size_);
+    }
+
+    template<class T>
+    typename Vector<T>::const_iterator Vector<T>::end() const noexcept {
+        return const_iterator(data_ + size_);
+    }
+
+    template<class T>
+    typename Vector<T>::const_iterator Vector<T>::cend() const noexcept {
+        return const_iterator(data_ + size_);
+    }
+
+    template<class T>
     T& Vector<T>::operator[](size_t id) noexcept {
         return data_[id];
     }
@@ -206,7 +297,8 @@ namespace topit {
         const size_t add = e - b;
         Vector<T> result(size_ + add);
 
-        // prefix
+
+
         for (size_t i = 0; i < pos; ++i) {
             result.data_[i] = data_[i];
         }
@@ -220,6 +312,27 @@ namespace topit {
         }
 
         swap(result);
+    }
+
+    template<class T>
+    void Vector<T>::insert(iterator pos, const T& val) {
+        if (pos < begin() || pos > end()) {
+            throw std::out_of_range("Vector::insert: iterator out of range");
+        }
+        insert(static_cast<size_t>(pos - begin()), val);
+    }
+
+    template<class T>
+    void Vector<T>::insert(iterator pos, const Vector<T>& rhs, const_iterator b, const_iterator e) {
+        if (pos < begin() || pos > end()) {
+            throw std::out_of_range("Vector::insert: iterator out of range");
+        }
+        if (b < rhs.begin() || b > rhs.end() || e < rhs.begin() || e > rhs.end() || b > e) {
+            throw std::out_of_range("Vector::insert: iterator range out of range");
+        }
+        insert(static_cast<size_t>(pos - begin()), rhs,
+               static_cast<size_t>(b - rhs.begin()),
+               static_cast<size_t>(e - rhs.begin()));
     }
 
     template<class T>
@@ -239,6 +352,14 @@ namespace topit {
         }
 
         swap(result);
+    }
+
+    template<class T>
+    void Vector<T>::erase(iterator pos) {
+        if (pos < begin() || pos >= end()) {
+            throw std::out_of_range("Vector::erase: iterator out of range");
+        }
+        erase(static_cast<size_t>(pos - begin()));
     }
 
     template<class T>
