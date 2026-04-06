@@ -4,7 +4,7 @@
 #include <cstddef>
 #include <stdexcept>
 #include <utility>
-
+#include <initializer_list>
 namespace topit {
     template<class T>
     struct Vector {
@@ -16,6 +16,7 @@ namespace topit {
         Vector(size_t size, const T& val);
         ~Vector();
 
+        Vector(std::initializer_list<T> il);
         Vector(const Vector<T>& rhs);
         Vector<T>& operator=(Vector<T> rhs);
         Vector(Vector<T>&& rhs) noexcept;
@@ -27,7 +28,6 @@ namespace topit {
         size_t getCapacity() const noexcept;
 
 
-		// классная работа (copy & swap) + тесты
         void insert(size_t pos, const T& val);
         void insert(size_t pos, const Vector<T> &rhs, size_t b, size_t e);
         void erase(size_t pos);
@@ -134,6 +134,17 @@ namespace topit {
             data_[i] = rhs.data_[i];
         }
     }
+    template<class T>
+    topit::Vector<T>::Vector(std::initializer_list<T> il)
+        : data_(il.size() ? new T[il.size()] : nullptr),
+          size_(il.size()),
+          capacity_(il.size()) {
+        size_t i = 0;
+        for (const T& val : il) {
+            data_[i++] = val;
+        }
+    }
+
 
     template<class T>
     Vector<T>& Vector<T>::operator=(Vector<T> rhs) {

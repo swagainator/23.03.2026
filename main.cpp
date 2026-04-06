@@ -7,30 +7,30 @@
 
 using topit::Vector;
 
-static bool test1_isEmpty_empty() {
+bool test1_isEmpty_empty() {
     Vector<int> v;
     return v.isEmpty();
 }
 
-static bool test2_getSize_empty() {
+bool test2_getSize_empty() {
     Vector<int> v;
     return v.getSize() == 0;
 }
 
-static bool test3_getSize_nonEmpty() {
+bool test3_getSize_nonEmpty() {
     constexpr size_t size = 3ull;
     Vector<int> v(size);
     return v.getSize() == size;
 }
 
-static bool test4_at_nonConst_inRange() {
+bool test4_at_nonConst_inRange() {
     constexpr size_t size = 3ull;
     Vector<int> v(size, 0);
     v.at(1) = 42;
     return v.at(1) == 42;
 }
 
-static bool test5_at_nonConst_outOfRange() {
+bool test5_at_nonConst_outOfRange() {
     constexpr size_t size = 3ull;
     Vector<int> v(size);
     try {
@@ -43,13 +43,13 @@ static bool test5_at_nonConst_outOfRange() {
     }
 }
 
-static bool test6_at_const_inRange() {
+bool test6_at_const_inRange() {
     constexpr size_t size = 2ull;
     const Vector<int> v(size, 7);
     return v.at(0) == 7 && v.at(1) == 7;
 }
 
-static bool test7_at_const_outOfRange() {
+bool test7_at_const_outOfRange() {
     constexpr size_t size = 3ull;
     const Vector<int> v(size);
     try {
@@ -62,53 +62,53 @@ static bool test7_at_const_outOfRange() {
     }
 }
 
-static bool test8_index_operator_nonConst() {
+bool test8_index_operator_nonConst() {
     Vector<int> v(3, 0);
     v[2] = 5;
     return v[2] == 5;
 }
 
-static bool test9_index_operator_const() {
+bool test9_index_operator_const() {
     const Vector<int> v(3, 9);
     return v[0] == 9 && v[1] == 9 && v[2] == 9;
 }
 
-static bool test10_equals_and_notEquals_same() {
+bool test10_equals_and_notEquals_same() {
     const Vector<int> a(3, 1);
     const Vector<int> b(3, 1);
     return (a == b) && !(a != b);
 }
 
-static bool test11_notEquals_differentValue() {
+bool test11_notEquals_differentValue() {
     Vector<int> a(3, 1);
     Vector<int> b(3, 1);
     b[2] = 2;
     return (a != b) && !(a == b);
 }
 
-static bool test12_notEquals_differentSize() {
+bool test12_notEquals_differentSize() {
     const Vector<int> a(2, 1);
     const Vector<int> b(3, 1);
     return (a != b) && !(a == b);
 }
 
-static bool test13_capacity_default() {
+bool test13_capacity_default() {
     const Vector<int> v;
     return v.getSize() == 0 && v.getCapacity() == 0;
 }
 
-static bool test14_capacity_constructed() {
+bool test14_capacity_constructed() {
     const Vector<int> v(5);
     return v.getSize() == 5 && v.getCapacity() == 5;
 }
 
-static bool test15_pushBack_single() {
+bool test15_pushBack_single() {
     Vector<int> v;
     v.pushBack(10);
     return v.getSize() == 1 && v.getCapacity() >= 1 && v[0] == 10;
 }
 
-static bool test16_pushBack_growth_and_values() {
+bool test16_pushBack_growth_and_values() {
     Vector<int> v;
     const size_t cap0 = v.getCapacity();
 
@@ -118,7 +118,6 @@ static bool test16_pushBack_growth_and_values() {
         return false;
     }
 
-    // Доводим до момента, когда точно понадобится рост
     while (v.getSize() < v.getCapacity()) {
         v.pushBack(7);
     }
@@ -142,13 +141,13 @@ static bool test16_pushBack_growth_and_values() {
     return true;
 }
 
-static bool test17_equals_emptyVectors() {
+bool test17_equals_emptyVectors() {
     const Vector<int> a;
     const Vector<int> b;
     return (a == b) && !(a != b);
 }
 
-static bool test18_pushBack_preservesOrder() {
+bool test18_pushBack_preservesOrder() {
     Vector<int> v;
     v.pushBack(1);
     v.pushBack(2);
@@ -169,7 +168,7 @@ static bool test18_pushBack_preservesOrder() {
     return true;
 }
 
-static bool test19_pushBack_preservesAllElements_afterSeveralReallocations() {
+bool test19_pushBack_preservesAllElements_afterSeveralReallocations() {
     Vector<int> v;
 
     const int n = 100;
@@ -190,7 +189,7 @@ static bool test19_pushBack_preservesAllElements_afterSeveralReallocations() {
     return true;
 }
 
-static bool test20_capacity_doubles_0_1_2_4_8() {
+bool test20_capacity_doubles_0_1_2_4_8() {
     Vector<int> v;
     if (v.getCapacity() != 0) {
         return false;
@@ -224,7 +223,7 @@ static bool test20_capacity_doubles_0_1_2_4_8() {
     return true;
 }
 
-static bool test21_index_operator_nonConst_returnsReference() {
+bool test21_index_operator_nonConst_returnsReference() {
     Vector<int> v(3, 0);
 
     const size_t index = 1;
@@ -238,13 +237,13 @@ static bool test21_index_operator_nonConst_returnsReference() {
     return v[index] == 123;
 }
 
-static bool test22_equals_emptyAndNonEmpty() {
+bool test22_equals_emptyAndNonEmpty() {
     const Vector<int> empty;
     const Vector<int> nonEmpty(1, 0);
     return (empty != nonEmpty) && !(empty == nonEmpty);
 }
 
-static bool test23_at_nonConst_returnsReference_addressCheck() {
+bool test23_at_nonConst_returnsReference_addressCheck() {
     Vector<int> v(2, 5);
     int& r = v.at(0);
     if (&r != &v[0]) {
@@ -253,33 +252,37 @@ static bool test23_at_nonConst_returnsReference_addressCheck() {
     r = 77;
     return v[0] == 77;
 }
-static bool test24_copyCtor_equal() {
+
+bool test24_copyCtor_equal() {
     Vector<int> v(2, 0);
     Vector<int> yav = v;
     return yav == v;
 }
-static bool test25_copyAssign_equal() {
+
+bool test25_copyAssign_equal() {
     Vector<int> v(2, 0);
     Vector<int> yav(v);
     const bool res = (v == yav);
     v = yav;
     return res && v == yav;
 }
-static bool test26_swap_swapsTwoVectors_andPreservesValues() {
+
+bool test26_swap_swapsTwoVectors_andPreservesValues() {
     Vector<int> v(2, 0);
-    Vector<int> yav(3,1);
+    Vector<int> yav(3, 1);
     Vector<int> cpy_v(v);
     Vector<int> cpy_yav(yav);
     v.swap(yav);
     return v == cpy_yav && yav == cpy_v;
 }
-static bool test27_insert_single_begin() {
+
+bool test27_insert_single_begin() {
     Vector<int> v(3, 7);
     v.insert(0, 1);
     return v.getSize() == 4 && v[0] == 1 && v[1] == 7 && v[2] == 7 && v[3] == 7;
 }
 
-static bool test28_insert_single_middle_end() {
+bool test28_insert_single_middle_end() {
     Vector<int> v;
     v.pushBack(1);
     v.pushBack(2);
@@ -294,7 +297,7 @@ static bool test28_insert_single_middle_end() {
     return v.getSize() == 5 && v[4] == 5;
 }
 
-static bool test29_insert_range() {
+bool test29_insert_range() {
     Vector<int> a;
     a.pushBack(1);
     a.pushBack(4);
@@ -310,7 +313,7 @@ static bool test29_insert_range() {
     return a.getSize() == 4 && a[0] == 1 && a[1] == 8 && a[2] == 7 && a[3] == 4;
 }
 
-static bool test30_erase_middle() {
+bool test30_erase_middle() {
     Vector<int> v;
     v.pushBack(1);
     v.pushBack(2);
@@ -321,7 +324,7 @@ static bool test30_erase_middle() {
     return v.getSize() == 3 && v[0] == 1 && v[1] == 3 && v[2] == 4;
 }
 
-static bool test31_insert_erase_outOfRange_throws() {
+bool test31_insert_erase_outOfRange_throws() {
     Vector<int> v(1, 0);
 
     try {
@@ -342,7 +345,7 @@ static bool test31_insert_erase_outOfRange_throws() {
     }
 }
 
-static bool test32_insert_iterator_begin() {
+bool test32_insert_iterator_begin() {
     Vector<int> v;
     v.pushBack(2);
     v.pushBack(3);
@@ -352,7 +355,7 @@ static bool test32_insert_iterator_begin() {
     return v.getSize() == 3 && v[0] == 1 && v[1] == 2 && v[2] == 3;
 }
 
-static bool test33_insert_iterator_middle() {
+bool test33_insert_iterator_middle() {
     Vector<int> v;
     v.pushBack(1);
     v.pushBack(3);
@@ -363,7 +366,7 @@ static bool test33_insert_iterator_middle() {
     return v.getSize() == 4 && v[0] == 1 && v[1] == 2 && v[2] == 3 && v[3] == 4;
 }
 
-static bool test34_insert_iterator_range() {
+bool test34_insert_iterator_range() {
     Vector<int> a;
     a.pushBack(1);
     a.pushBack(5);
@@ -379,7 +382,7 @@ static bool test34_insert_iterator_range() {
     return a.getSize() == 5 && a[0] == 1 && a[1] == 2 && a[2] == 3 && a[3] == 4 && a[4] == 5;
 }
 
-static bool test35_erase_iterator_begin() {
+bool test35_erase_iterator_begin() {
     Vector<int> v;
     v.pushBack(1);
     v.pushBack(2);
@@ -390,7 +393,7 @@ static bool test35_erase_iterator_begin() {
     return v.getSize() == 2 && v[0] == 2 && v[1] == 3;
 }
 
-static bool test36_erase_iterator_middle() {
+bool test36_erase_iterator_middle() {
     Vector<int> v;
     v.pushBack(1);
     v.pushBack(2);
@@ -402,7 +405,7 @@ static bool test36_erase_iterator_middle() {
     return v.getSize() == 3 && v[0] == 1 && v[1] == 2 && v[2] == 4;
 }
 
-static bool test37_erase_iterator_end_minus_one() {
+bool test37_erase_iterator_end_minus_one() {
     Vector<int> v;
     v.pushBack(1);
     v.pushBack(2);
@@ -413,6 +416,15 @@ static bool test37_erase_iterator_end_minus_one() {
     return v.getSize() == 2 && v[0] == 1 && v[1] == 2;
 }
 
+bool test38_initializerList_constructsAndIndexes() {
+    Vector<int> v{3, 1};
+    return (v.getSize() == 2) && (v.at(0) == 3) && (v[1] == 1);
+}
+
+bool test39_initializerList_empty_isEmpty() {
+    Vector<int> v{};
+    return v.isEmpty();
+}
 
 int main() {
     using test_t = bool (*)();
@@ -456,6 +468,8 @@ int main() {
         {test35_erase_iterator_begin, "Test 35: erase(it) removes first element"},
         {test36_erase_iterator_middle, "Test 36: erase(it) removes middle element"},
         {test37_erase_iterator_end_minus_one, "Test 37: erase(end()-1) removes last element"},
+        {test38_initializerList_constructsAndIndexes, "Test 38: initializer_list constructs vector and indexing works"},
+        {test39_initializerList_empty_isEmpty, "Test 39: initializer_list empty {} creates empty vector"},
     };
 
     std::cout << std::boolalpha;
