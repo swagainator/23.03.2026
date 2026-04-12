@@ -26,6 +26,11 @@ namespace topit {
         bool isEmpty() const noexcept;
         size_t getSize() const noexcept;
         size_t getCapacity() const noexcept;
+        void reserve(size_t k);
+        void shrinkToFit();
+        void repeatPushBack(const T& val, size_t k);
+        template<class IT>
+            void rangedPushBack(IT b, IT e);
 
 
         void insert(size_t pos, const T& val);
@@ -123,6 +128,14 @@ namespace topit {
         for (size_t i = 0; i < size_; ++i) {
             data_[i] = val;
         }
+    }
+    template<class T>
+    void Vector<T>::reserve(size_t k) {
+        Vector<T> v(k);
+        for (size_t i = 0; i < getSize(); ++i) {
+            v[i] = std::move((*this)[i]);
+        }
+        swap(v);
     }
 
     template<class T>
@@ -266,6 +279,17 @@ namespace topit {
         data_[size_] = val;
         ++size_;
     }
+    template<class T>
+    void topit::Vector<T>::repeatPushBack(const T& val, size_t k) {
+    }
+
+    template<class T>
+    template<class IT>
+    void topit::Vector<T>::rangedPushBack(IT b, IT e) {
+        size_t count = std::distance(b, e);
+
+    }
+
 	template<class T>
 	void topit::Vector<T>::pushFront(const T& val) {
         Vector<T> result(getSize() + 1);
