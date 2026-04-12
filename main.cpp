@@ -426,6 +426,57 @@ bool test39_initializerList_empty_isEmpty() {
     return v.isEmpty();
 }
 
+bool test40_reserve_increasesCapacity_butKeepsSizeAndValues() {
+    Vector<int> v;
+    v.pushBack(10);
+    v.pushBack(20);
+    v.pushBack(30);
+
+    v.reserve(10);
+
+    return v.getSize() == 3 && v.getCapacity() == 10
+           && v[0] == 10 && v[1] == 20 && v[2] == 30;
+}
+
+bool test41_shrinkToFit_reducesCapacityToSize() {
+    Vector<int> v;
+    v.pushBack(1);
+    v.pushBack(2);
+    v.pushBack(3);
+    v.pushBack(4);
+    v.erase(1);
+
+    const size_t size_before = v.getSize();
+    v.shrinkToFit();
+
+    return v.getSize() == size_before && v.getCapacity() == size_before
+           && v[0] == 1 && v[1] == 3 && v[2] == 4;
+}
+
+bool test42_repeatPushBack_appendsSeveralEqualValues() {
+    Vector<int> v;
+    v.pushBack(5);
+
+    v.repeatPushBack(7, 3);
+
+    return v.getSize() == 4
+           && v[0] == 5 && v[1] == 7 && v[2] == 7 && v[3] == 7;
+}
+
+bool test43_rangedPushBack_appendsWholeRange() {
+    Vector<int> source;
+    source.pushBack(2);
+    source.pushBack(4);
+    source.pushBack(6);
+
+    Vector<int> v;
+    v.pushBack(1);
+    v.rangedPushBack(source.begin(), source.end());
+
+    return v.getSize() == 4
+           && v[0] == 1 && v[1] == 2 && v[2] == 4 && v[3] == 6;
+}
+
 int main() {
     using test_t = bool (*)();
     using case_t = std::pair<test_t, const char*>;
@@ -470,6 +521,10 @@ int main() {
         {test37_erase_iterator_end_minus_one, "Test 37: erase(end()-1) removes last element"},
         {test38_initializerList_constructsAndIndexes, "Test 38: initializer_list constructs vector and indexing works"},
         {test39_initializerList_empty_isEmpty, "Test 39: initializer_list empty {} creates empty vector"},
+        {test40_reserve_increasesCapacity_butKeepsSizeAndValues, "Test 40: reserve() increases capacity and keeps size and values"},
+        {test41_shrinkToFit_reducesCapacityToSize, "Test 41: shrinkToFit() reduces capacity to current size"},
+        {test42_repeatPushBack_appendsSeveralEqualValues, "Test 42: repeatPushBack() appends k copies of value"},
+        {test43_rangedPushBack_appendsWholeRange, "Test 43: rangedPushBack() appends elements from iterator range"},
     };
 
     std::cout << std::boolalpha;
