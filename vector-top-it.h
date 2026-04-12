@@ -131,10 +131,36 @@ namespace topit {
     }
     template<class T>
     void Vector<T>::reserve(size_t k) {
-        Vector<T> v(k);
-        for (size_t i = 0; i < getSize(); ++i) {
-            v[i] = std::move((*this)[i]);
+        if (k <= capacity_) {
+            return;
         }
+
+        Vector<T> v;
+        v.data_ = new T[k];
+        v.size_ = size_;
+        v.capacity_ = k;
+
+        for (size_t i = 0; i < size_; ++i) {
+            v.data_[i] = std::move(data_[i]);
+        }
+        swap(v);
+    }
+
+    template<class T>
+    void Vector<T>::shrinkToFit() {
+        if (size_ == capacity_) {
+            return;
+        }
+
+        Vector<T> v;
+        v.data_ = size_ ? new T[size_] : nullptr;
+        v.size_ = size_;
+        v.capacity_ = size_;
+
+        for (size_t i = 0; i < size_; ++i) {
+            v.data_[i] = std::move(data_[i]);
+        }
+
         swap(v);
     }
 
@@ -281,13 +307,25 @@ namespace topit {
     }
     template<class T>
     void topit::Vector<T>::repeatPushBack(const T& val, size_t k) {
+        reserve(size_ + k);
+        for (size_t i = 0; i < k; ++i) {
+            data_[size_ + i] = val;
+        }
+        size_ += k;
     }
 
     template<class T>
     template<class IT>
     void topit::Vector<T>::rangedPushBack(IT b, IT e) {
-        size_t count = std::distance(b, e);
-
+        size_t count = 0;
+        for (IT it = b; it != e; ++it) {
+            ++count;
+        }
+        reserve(size_ + count);
+        for (; b != e; ++b) {
+            data_[size_] = *b;
+            ++size_;
+        }
     }
 
 	template<class T>
